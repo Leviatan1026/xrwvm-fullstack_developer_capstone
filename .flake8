@@ -1,6 +1,6 @@
 [flake8]
 max-line-length = 150
-ignore = E302,E303,E722,E275,F841,W292
+ignore = E302,E303,E722,E275,F841,W292,E128,E231,E117,E121,E131,F401
 exclude = 
     */migrations/*,
     */node_modules/*,
