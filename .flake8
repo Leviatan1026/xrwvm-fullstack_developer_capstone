@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 150
+ignore = E302,E303,E722,E275,F841,W292
+exclude = 
+    */migrations/*,
+    */node_modules/*,
+    */frontend/*,
+    */__pycache__/*
