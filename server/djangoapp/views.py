@@ -1,42 +1,59 @@
-# Uncomment the required imports before adding the code
+# Required imports
 
-# from django.shortcuts import render
-# from django.http import HttpResponseRedirect, HttpResponse
-# from django.contrib.auth.models import User
-# from django.shortcuts import get_object_or_404, render, redirect
-# from django.contrib.auth import logout
-# from django.contrib import messages
-# from datetime import datetime
-
-from django.http import JsonResponse
-from django.contrib.auth import login, authenticate
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.contrib.auth.models import User
+from django.contrib.auth import login, logout, authenticate
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime
 import logging
 import json
-from django.views.decorators.csrf import csrf_exempt
-# from .populate import initiate
 
+from .populate import initiate
 
-# Get an instance of a logger
+# Logger
 logger = logging.getLogger(__name__)
 
 
-# Create your views here.
-
-# Create a `login_request` view to handle sign in request
 @csrf_exempt
 def login_user(request):
-    # Get username and password from request.POST dictionary
-    data = json.loads(request.body)
-    username = data['userName']
-    password = data['password']
-    # Try to check if provide credential can be authenticated
-    user = authenticate(username=username, password=password)
-    data = {"userName": username}
-    if user is not None:
-        # If user is valid, call login method to login current user
-        login(request, user)
-        data = {"userName": username, "status": "Authenticated"}
-    return JsonResponse(data)
+    if request.method == "POST":
+        try:
+            # Leer datos del body
+            data = json.loads(request.body)
+            username = data.get('userName')
+            password = data.get('password')
+
+            # Autenticar usuario
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                # Login exitoso
+                login(request, user)
+                return JsonResponse({
+                    "userName": username,
+                    "status": "Authenticated"
+                })
+            else:
+                # Login fallido
+                return JsonResponse({
+                    "userName": username,
+                    "status": "Failed"
+                })
+
+        except Exception as e:
+            logger.error(f"Login error: {str(e)}")
+            return JsonResponse({
+                "userName": "",
+                "status": "Error"
+            })
+
+    # Si no es POST
+    return JsonResponse({
+        "userName": "",
+        "status": "Invalid request"
+    })
 
 # Create a `logout_request` view to handle sign out request
 # def logout_request(request):
