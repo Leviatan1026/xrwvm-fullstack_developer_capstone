@@ -55,10 +55,12 @@ def login_user(request):
         "status": "Invalid request"
     })
 
-# Create a `logout_request` view to handle sign out request
-# def logout_request(request):
-# ...
-
+@csrf_exempt
+def logout_user(request):
+    if request.method == "GET":
+        logout(request)  # Terminar sesión
+        data = {"userName": ""}
+        return JsonResponse(data)
 # Create a `registration` view to handle sign up request
 # @csrf_exempt
 # def registration(request):
